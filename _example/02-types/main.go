@@ -28,7 +28,7 @@ func main() {
 	t.Static("new", func(c *binder.Context) error {
 		p := &Person{}
 		p.SetName(c.Param(1).String())
-		c.Push().Data(p)
+		c.Push().Table(p)
 
 		return nil
 	})
@@ -36,7 +36,7 @@ func main() {
 	t.Method("name", func(c *binder.Context) error {
 		if person, ok := c.Data(1).Value().(*Person); ok {
 			if c.Top() == 1 {
-				c.Push().Any(person.Name())
+				c.Push().Value(person.Name())
 			} else {
 				person.SetName(c.Param(2).String())
 			}

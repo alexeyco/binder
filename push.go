@@ -6,9 +6,9 @@ type Push struct {
 	context *Context
 }
 
-func (p *Push) Data(v interface{}) {
+func (p *Push) Table(v interface{}) {
 	if p.context.table == nil {
-		p.Any(v)
+		p.Value(v)
 		return
 	}
 
@@ -22,7 +22,7 @@ func (p *Push) Data(v interface{}) {
 	p.context.e = false
 }
 
-func (p *Push) Any(v interface{}) {
+func (p *Push) Value(v interface{}) {
 	var c lua.LValue
 
 	switch t := v.(type) {

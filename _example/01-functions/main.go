@@ -14,7 +14,7 @@ func main() {
 	b.Func("double", func(c *binder.Context) error {
 		x := c.Param(1).Int()
 
-		c.Push().Any(x*2)
+		c.Push().Value(x*2)
 
 		return nil
 	})

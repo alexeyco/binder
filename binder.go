@@ -28,7 +28,7 @@ func (b *Binder) Table(name string) *Table {
 
 func (b *Binder) Module(name string) *Module {
 	m := &Module{
-		Name: name,
+		Name:  name,
 		funcs: map[string]Handler{},
 	}
 
