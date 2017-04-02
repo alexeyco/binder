@@ -3,7 +3,7 @@ package binder
 import "github.com/yuin/gopher-lua"
 
 type Data struct {
-	state *lua.LState
+	state  *lua.LState
 	number int
 }
 

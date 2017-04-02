@@ -6,18 +6,24 @@ import (
 
 type Binder struct {
 	state  *lua.LState
+	funcs  map[string]Handler
 	tables []*Table
+}
+
+func (b *Binder) Func(name string, handler Handler) {
+	b.funcs[name] = handler
 }
 
 func (b *Binder) Table(name string) *Table {
 	t := &Table{
 		Name:    name,
+		binder:  b,
 		static:  map[string]Handler{},
 		methods: map[string]Handler{},
 	}
 
 	b.tables = append(b.tables, t)
-		return t
+	return t
 }
 
 func (b *Binder) DoString(s string) error {
@@ -31,9 +37,33 @@ func (b *Binder) DoFile(f string) error {
 }
 
 func (b *Binder) prepare() {
+	for name, handler := range b.funcs {
+		b.state.SetGlobal(name, b.state.NewFunction(func(s *lua.LState) int {
+			return b.handle(s, handler)
+		}))
+	}
+
 	for _, t := range b.tables {
 		t.prepare(b.state)
 	}
+}
+
+func (b *Binder) handle(s *lua.LState, handler Handler) int {
+	c := &Context{
+		e:     true,
+		state: s,
+	}
+
+	err := handler(c)
+	if err != nil {
+		c.error(err)
+	}
+
+	if !c.empty() {
+		return 1
+	}
+
+	return 0
 }
 
 func New() *Binder {
@@ -42,6 +72,7 @@ func New() *Binder {
 
 	return &Binder{
 		state:  s,
+		funcs:  map[string]Handler{},
 		tables: []*Table{},
 	}
 }

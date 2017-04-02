@@ -2,9 +2,9 @@ package main
 
 import (
 	"log"
+	"errors"
 
 	"github.com/alexeyco/binder"
-	"errors"
 )
 
 type Person struct {
@@ -20,6 +20,8 @@ func (p *Person) SetName(name string) {
 }
 
 func main() {
+	// Based on https://github.com/yuin/gopher-lua#user-defined-types
+
 	b := binder.New()
 
 	t := b.Table("person")
@@ -34,7 +36,7 @@ func main() {
 	t.Method("name", func(c *binder.Context) error {
 		if person, ok := c.Data(1).Value().(*Person); ok {
 			if c.Top() == 1 {
-				c.Push().String(person.Name())
+				c.Push().Any(person.Name())
 			} else {
 				person.SetName(c.Param(2).String())
 			}
