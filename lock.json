@@ -1,0 +1,24 @@
+{
+    "memo": "3ffff379da810ac7d5c1f927b58ae9cb4c26f83c4986a157bee5f13ea99b0030",
+    "projects": [
+        {
+            "name": "github.com/yuin/gopher-lua",
+            "branch": "master",
+            "revision": "65fb8eeb2aa6d29a7b654d61afd1a07ce3897cc9",
+            "packages": [
+                ".",
+                "ast",
+                "parse",
+                "pm"
+            ]
+        },
+        {
+            "name": "golang.org/x/net",
+            "branch": "master",
+            "revision": "ffcf1bedda3b04ebb15a168a59800a73d6dc0f4d",
+            "packages": [
+                "context"
+            ]
+        }
+    ]
+}

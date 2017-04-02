@@ -1,0 +1,10 @@
+{
+    "dependencies": {
+        "github.com/backupr/backupr": {
+            "branch": "feature-lua-config"
+        },
+        "github.com/yuin/gopher-lua": {
+            "branch": "master"
+        }
+    }
+}
