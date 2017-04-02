@@ -8,7 +8,6 @@ type Handler func(*Context) error
 
 type Table struct {
 	Name    string
-	binder  *Binder
 	static  map[string]Handler
 	methods map[string]Handler
 }

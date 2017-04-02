@@ -5,9 +5,10 @@ import (
 )
 
 type Binder struct {
-	state  *lua.LState
-	funcs  map[string]Handler
-	tables []*Table
+	state   *lua.LState
+	funcs   map[string]Handler
+	tables  []*Table
+	modules []*Module
 }
 
 func (b *Binder) Func(name string, handler Handler) {
@@ -17,13 +18,22 @@ func (b *Binder) Func(name string, handler Handler) {
 func (b *Binder) Table(name string) *Table {
 	t := &Table{
 		Name:    name,
-		binder:  b,
 		static:  map[string]Handler{},
 		methods: map[string]Handler{},
 	}
 
 	b.tables = append(b.tables, t)
 	return t
+}
+
+func (b *Binder) Module(name string) *Module {
+	m := &Module{
+		Name: name,
+		funcs: map[string]Handler{},
+	}
+
+	b.modules = append(b.modules, m)
+	return m
 }
 
 func (b *Binder) DoString(s string) error {
@@ -45,6 +55,10 @@ func (b *Binder) prepare() {
 
 	for _, t := range b.tables {
 		t.prepare(b.state)
+	}
+
+	for _, m := range b.modules {
+		m.prepare(b.state)
 	}
 }
 

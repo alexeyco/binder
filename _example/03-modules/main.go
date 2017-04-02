@@ -7,15 +7,13 @@ import (
 )
 
 func main() {
-	// Based on https://github.com/yuin/gopher-lua#calling-go-from-lua
+	// Based on https://github.com/yuin/gopher-lua#creating-a-module-by-go
 
 	b := binder.New()
-
-	b.Func("double", func(c *binder.Context) error {
+	math := b.Module("mymodule")
+	math.Func("double", func(c *binder.Context) error {
 		x := c.Param(1).Int()
-
 		c.Push().Any(x*2)
-
 		return nil
 	})
 
