@@ -6,6 +6,16 @@ Package binder allows to easily bind to Lua. Based on [gopher-lua](https://githu
 
 Write less, do more.
 
+## Installation
+```
+$ go get -u github.com/alexeyco/binder
+```
+To run unit tests:
+```
+$ cd $GOPATH/src/github.com/alexeyco/binder
+$ go test -cover
+```
+
 ## Examples
 
 ### Functions
@@ -145,8 +155,33 @@ func main() {
 }
 ```
 
-### Configuration
-Soon...
+### Options
+```go
+// Options binder options object
+type Options struct {
+	// CallStackSize is call stack size
+	CallStackSize int
+	// RegistrySize is data stack size
+	RegistrySize int
+	// SkipOpenLibs controls whether or not libraries are opened by default
+	SkipOpenLibs bool
+	// IncludeGoStackTrace tells whether a Go stacktrace should be included in a Lua stacktrace when panics occur.
+	IncludeGoStackTrace bool
+}
+```
+Read [more](https://github.com/yuin/gopher-lua#miscellaneous-luanewstate-options).
+
+For example:
+```go
+b := binder.New(binder.Options{
+	SkipOpenLibs: true,
+})
+```
+
+Note: if `SkipOpenLibs` is `true`, not all open libs will be skipped in contrast to the basic logic of 
+[gopher-lua](https://github.com/yuin/gopher-lua). If you set `SkipOpenLibs` to `true`, the following 
+basic libraries will be loaded: all [basic functions](https://www.lua.org/manual/5.1/manual.html#5.1), 
+[table](https://www.lua.org/manual/5.1/manual.html#5.5) and [package](https://www.lua.org/manual/5.1/manual.html#5.3).
 
 ## License
 ```
