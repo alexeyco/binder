@@ -46,14 +46,14 @@ func (b *Binder) Table(name string) *Table {
 	return t
 }
 
-// ExecString runs lua script string
-func (b *Binder) ExecString(s string) error {
+// DoString runs lua script string
+func (b *Binder) DoString(s string) error {
 	b.load()
 	return b.state.DoString(s)
 }
 
-// ExecFile runs lua script file
-func (b *Binder) ExecFile(f string) error {
+// DoFile runs lua script file
+func (b *Binder) DoFile(f string) error {
 	b.load()
 	return b.state.DoFile(f)
 }

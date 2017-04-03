@@ -50,7 +50,7 @@ func main() {
 		return nil
 	})
 
-	if err := b.ExecString(`
+	if err := b.DoString(`
 		log('This', 'is', 'Lua')
 	`); err != nil {
 		log.Fatalln(err)
@@ -89,7 +89,7 @@ func main() {
 		return nil
 	})
 
-	if err := b.ExecString(`
+	if err := b.DoString(`
 		local r = require('reverse')
 
 		print(r.string('ABCDEFGHIJKLMNOPQRSTUFVWXYZ'))
@@ -143,7 +143,7 @@ func main() {
 		return nil
 	})
 
-	if err := b.ExecString(`
+	if err := b.DoString(`
 		local p = person.new('Steeve')
 		print(p:name())
 

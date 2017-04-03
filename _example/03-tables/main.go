@@ -40,7 +40,7 @@ func main() {
 		return nil
 	})
 
-	if err := b.ExecString(`
+	if err := b.DoString(`
 		local p = person.new('Steeve')
 		print(p:name())
 

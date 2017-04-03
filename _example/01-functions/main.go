@@ -28,7 +28,7 @@ func main() {
 		return nil
 	})
 
-	if err := b.ExecString(`
+	if err := b.DoString(`
 		log('This', 'is', 'Lua')
 	`); err != nil {
 		log.Fatalln(err)
