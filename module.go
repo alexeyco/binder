@@ -41,6 +41,7 @@ func (m *Module) handle(s *lua.LState, handler Handler) int {
 	err := handler(c)
 	if err != nil {
 		c.error(err)
+		return 0
 	}
 
 	if !c.empty() {
