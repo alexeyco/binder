@@ -1,0 +1,13 @@
+language: go
+
+go:
+  - tip
+
+before_install:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+  - go get github.com/yuin/gopher-lua
+
+script:
+ - go test -v ./...
+ - $HOME/gopath/bin/goveralls -repotoken p5xBJOR5UOE99ZNGzvDnNQOXzwyh75eQP
