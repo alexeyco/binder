@@ -13,10 +13,6 @@ type Binder struct {
 	tables  []*Table
 }
 
-func (b *Binder) EnableBuiltins() {
-
-}
-
 func (b *Binder) Func(name string, handler Handler) {
 	b.funcs[name] = handler
 }
@@ -110,6 +106,7 @@ func New(opts ...Options) *Binder {
 		state:   s,
 		funcs:   map[string]Handler{},
 		modules: []*Module{},
+		tables:  []*Table{},
 	}
 }
 
