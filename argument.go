@@ -7,18 +7,22 @@ type Argument struct {
 	number int
 }
 
-func (a *Argument) String(n int) string {
-	return a.state.CheckString(n)
+func (a *Argument) String() string {
+	return a.state.CheckString(a.number)
 }
 
-func (a *Argument) Number(n int) float64 {
-	return float64(a.state.CheckNumber(n))
+func (a *Argument) Number() float64 {
+	return float64(a.state.CheckNumber(a.number))
 }
 
-func (a *Argument) Bool(n int) bool {
-	return a.state.CheckBool(n)
+func (a *Argument) Bool() bool {
+	return a.state.CheckBool(a.number)
 }
 
-func (a *Argument) Data(n int) interface{} {
-	return a.state.CheckUserData(n)
+func (a *Argument) Any() interface{} {
+	return a.state.CheckAny(a.number)
+}
+
+func (a *Argument) Data() interface{} {
+	return a.state.CheckUserData(a.number).Value
 }

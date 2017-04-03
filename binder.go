@@ -10,6 +10,11 @@ type Binder struct {
 	state   *lua.LState
 	funcs   map[string]Handler
 	modules []*Module
+	tables  []*Table
+}
+
+func (b *Binder) EnableBuiltins() {
+
 }
 
 func (b *Binder) Func(name string, handler Handler) {
@@ -26,6 +31,18 @@ func (b *Binder) Module(name string) *Module {
 
 	b.modules = append(b.modules, m)
 	return m
+}
+
+func (b *Binder) Table(name string) *Table {
+	t := &Table{
+		name:    name,
+		state:   b.state,
+		static:  map[string]Handler{},
+		dynamic: map[string]Handler{},
+	}
+
+	b.tables = append(b.tables, t)
+	return t
 }
 
 func (b *Binder) ExecString(s string) error {
@@ -47,11 +64,47 @@ func (b *Binder) load() {
 	for _, m := range b.modules {
 		m.load()
 	}
+
+	for _, t := range b.tables {
+		t.load()
+	}
 }
 
-func New() *Binder {
-	s := lua.NewState()
+func New(opts ...Options) *Binder {
+	options := []lua.Options{}
+
+	if len(opts) > 0 {
+		o := opts[0]
+
+		options = append(options, lua.Options{
+			CallStackSize:       o.CallStackSize,
+			RegistrySize:        o.RegistrySize,
+			SkipOpenLibs:        o.SkipOpenLibs,
+			IncludeGoStackTrace: o.IncludeGoStackTrace,
+		})
+	}
+
+	s := lua.NewState(options...)
 	defer s.Close()
+
+	if len(opts) > 0 && opts[0].SkipOpenLibs {
+		type lib struct {
+			Name string
+			Func lua.LGFunction
+		}
+
+		libs := []lib{
+			{lua.LoadLibName, lua.OpenPackage},
+			{lua.BaseLibName, lua.OpenBase},
+			{lua.TabLibName, lua.OpenTable},
+		}
+
+		for _, l := range libs {
+			s.Push(s.NewFunction(l.Func))
+			s.Push(lua.LString(l.Name))
+			s.Call(1, 0)
+		}
+	}
 
 	return &Binder{
 		state:   s,
