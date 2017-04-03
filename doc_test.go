@@ -5,7 +5,7 @@ import (
 	"log"
 )
 
-func ExampleExamples_Function() {
+func ExampleBinder_Func() {
 	b := New(Options{
 		SkipOpenLibs: true,
 	})
@@ -33,7 +33,7 @@ func ExampleExamples_Function() {
 	}
 }
 
-func ExampleExamples_Module() {
+func ExampleBinder_Module() {
 	b := New()
 
 	m := b.Module("reverse")
@@ -61,7 +61,7 @@ func ExampleExamples_Module() {
 	}
 }
 
-func ExampleExamples_Table() {
+func ExampleBinder_Table() {
 	type Person struct {
 		Name string
 	}
