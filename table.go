@@ -2,6 +2,7 @@ package binder
 
 import "github.com/yuin/gopher-lua"
 
+// Table lua tables wrapper
 type Table struct {
 	name    string
 	state   *lua.LState
@@ -9,10 +10,12 @@ type Table struct {
 	dynamic map[string]Handler
 }
 
+// Static sets table "static" method (f.e. foo.bar())
 func (t *Table) Static(name string, handler Handler) {
 	t.static[name] = handler
 }
 
+// Dynamic sets table "dynamic" method (f.e. foo:bar())
 func (t *Table) Dynamic(name string, handler Handler) {
 	t.dynamic[name] = handler
 }

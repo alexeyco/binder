@@ -2,15 +2,18 @@ package binder
 
 import "github.com/yuin/gopher-lua"
 
+// Context function context
 type Context struct {
 	state  *lua.LState
 	pushed int
 }
 
+// Top returns count of function arguments
 func (c *Context) Top() int {
 	return c.state.GetTop()
 }
 
+// Arg returns function argument by number
 func (c *Context) Arg(num int) *Argument {
 	return &Argument{
 		state:  c.state,
@@ -18,6 +21,7 @@ func (c *Context) Arg(num int) *Argument {
 	}
 }
 
+// Push pushes function result
 func (c *Context) Push() *Push {
 	return &Push{
 		context: c,

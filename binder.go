@@ -4,8 +4,10 @@ import (
 	"github.com/yuin/gopher-lua"
 )
 
+// Handler is binder function handler
 type Handler func(*Context) error
 
+// Binder is a binder... that's all
 type Binder struct {
 	state   *lua.LState
 	funcs   map[string]Handler
@@ -13,10 +15,12 @@ type Binder struct {
 	tables  []*Table
 }
 
+// Func assign handler with specified alias
 func (b *Binder) Func(name string, handler Handler) {
 	b.funcs[name] = handler
 }
 
+// Module creates new module and returns it
 func (b *Binder) Module(name string) *Module {
 	m := &Module{
 		name:   name,
@@ -29,6 +33,7 @@ func (b *Binder) Module(name string) *Module {
 	return m
 }
 
+// Table creates new table and returns it
 func (b *Binder) Table(name string) *Table {
 	t := &Table{
 		name:    name,
@@ -41,11 +46,13 @@ func (b *Binder) Table(name string) *Table {
 	return t
 }
 
+// ExecString runs lua script string
 func (b *Binder) ExecString(s string) error {
 	b.load()
 	return b.state.DoString(s)
 }
 
+// ExecFile runs lua script file
 func (b *Binder) ExecFile(f string) error {
 	b.load()
 	return b.state.DoFile(f)
@@ -66,6 +73,7 @@ func (b *Binder) load() {
 	}
 }
 
+// New returns new binder instance
 func New(opts ...Options) *Binder {
 	options := []lua.Options{}
 

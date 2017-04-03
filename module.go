@@ -4,6 +4,7 @@ import (
 	"github.com/yuin/gopher-lua"
 )
 
+// Module is a lua module wrapper
 type Module struct {
 	name   string
 	state  *lua.LState
@@ -11,18 +12,22 @@ type Module struct {
 	funcs  map[string]Handler
 }
 
+// String sets module string constant
 func (m *Module) String(name, value string) {
 	m.fields[name] = lua.LString(value)
 }
 
+// Number sets module number (float64) constant
 func (m *Module) Number(name string, value float64) {
 	m.fields[name] = lua.LNumber(value)
 }
 
+// Bool sets module bool constant
 func (m *Module) Bool(name string, value bool) {
 	m.fields[name] = lua.LBool(value)
 }
 
+// Func sets module function with specified name
 func (m *Module) Func(name string, handler Handler) {
 	m.funcs[name] = handler
 }

@@ -1,5 +1,6 @@
 package binder
 
+// Options binder options object
 type Options struct {
 	// CallStackSize is call stack size
 	CallStackSize int
