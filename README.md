@@ -6,8 +6,149 @@ Package binder allows to easily bind to Lua. Based on [gopher-lua](https://githu
 
 Write less, do more.
 
-## License
+## Examples
 
+### Functions
+```go
+package main
+
+import (
+	"errors"
+	"log"
+
+	"github.com/alexeyco/binder"
+)
+
+func main() {
+	b := binder.New(binder.Options{
+		SkipOpenLibs: true,
+	})
+
+	b.Func("log", func(c *binder.Context) error {
+		t := c.Top()
+		if t == 0 {
+			return errors.New("need arguments")
+		}
+
+		l := []interface{}{}
+
+		for i := 1; i <= t; i++ {
+			l = append(l, c.Arg(i).Any())
+		}
+
+		log.Println(l...)
+		return nil
+	})
+
+	if err := b.ExecString(`
+		log('This', 'is', 'Lua')
+	`); err != nil {
+		log.Fatalln(err)
+	}
+}
+```
+
+### Modules
+```go
+package main
+
+import (
+	"errors"
+	"log"
+
+	"github.com/alexeyco/binder"
+)
+
+func main() {
+	b := binder.New()
+
+	m := b.Module("reverse")
+	m.Func("string", func(c *binder.Context) error {
+		if c.Top() == 0 {
+			return errors.New("need arguments")
+		}
+
+		s := c.Arg(1).String()
+
+		runes := []rune(s)
+		for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
+			runes[i], runes[j] = runes[j], runes[i]
+		}
+
+		c.Push().String(string(runes))
+		return nil
+	})
+
+	if err := b.ExecString(`
+		local r = require('reverse')
+
+		print(r.string('ABCDEFGHIJKLMNOPQRSTUFVWXYZ'))
+	`); err != nil {
+		log.Fatalln(err)
+	}
+}
+
+```
+### Tables
+```go
+package main
+
+import (
+	"errors"
+	"log"
+
+	"github.com/alexeyco/binder"
+)
+
+type Person struct {
+	Name string
+}
+
+func main() {
+	b := binder.New()
+
+	t := b.Table("person")
+	t.Static("new", func(c *binder.Context) error {
+		if c.Top() == 0 {
+			return errors.New("need arguments")
+		}
+		n := c.Arg(1).String()
+
+		c.Push().Data(&Person{n}, "person")
+		return nil
+	})
+
+	t.Dynamic("name", func(c *binder.Context) error {
+		p, ok := c.Arg(1).Data().(*Person)
+		if !ok {
+			return errors.New("person expected")
+		}
+
+		if c.Top() == 1 {
+			c.Push().String(p.Name)
+		} else {
+			p.Name = c.Arg(2).String()
+		}
+
+		return nil
+	})
+
+	if err := b.ExecString(`
+		local p = person.new('Steeve')
+		print(p:name())
+
+		p:name('Alice')
+		print(p:name())
+	`); err != nil {
+		log.Fatalln(err)
+	}
+}
+```
+
+### Configuration
+Soon...
+
+## License
 ```
 MIT License
 
