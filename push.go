@@ -6,40 +6,27 @@ type Push struct {
 	context *Context
 }
 
-func (p *Push) Table(v interface{}) {
-	if p.context.table == nil {
-		p.Value(v)
-		return
-	}
-
-	state := p.context.state
-
-	ud := state.NewUserData()
-	ud.Value = v
-
-	state.SetMetatable(ud, state.GetTypeMetatable(p.context.table.Name))
-	state.Push(ud)
-	p.context.e = false
+func (p *Push) String(s string) {
+	p.context.state.Push(lua.LString(s))
+	p.context.increase()
 }
 
-func (p *Push) Value(v interface{}) {
-	var c lua.LValue
+func (p *Push) Number(n float64) {
+	p.context.state.Push(lua.LNumber(n))
+	p.context.increase()
+}
 
-	switch t := v.(type) {
-	case bool:
-		c = lua.LBool(t)
-	case string:
-		c = lua.LString(t)
-	case int:
-		c = lua.LNumber(t)
-	case uint:
-		c = lua.LNumber(t)
-	case float32, float64:
-		c = lua.LNumber(t.(float64))
-	default:
-		c = lua.LValue(&lua.LNilType{})
-	}
+func (p *Push) Bool(b bool) {
+	p.context.state.Push(lua.LBool(b))
+	p.context.increase()
+}
 
-	p.context.state.Push(c)
-	p.context.e = false
+func (p *Push) Data(d interface{}, t string) {
+	ud := p.context.state.NewUserData()
+	ud.Value = d
+
+	p.context.state.SetMetatable(ud, p.context.state.GetTypeMetatable(t))
+	p.context.state.Push(ud)
+
+	p.context.increase()
 }

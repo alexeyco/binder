@@ -1,6 +1,0 @@
-print("double(2) =", double(2))
-print("double(4) =", double(4))
-print("double(6) =", double(6))
-print("double(8) =", double(8))
-print("double(10) =", double(10))
-print("double(12) =", double(12))

@@ -3,27 +3,19 @@ package binder
 import "github.com/yuin/gopher-lua"
 
 type Context struct {
-	e     bool
-	state *lua.LState
-	table *Table
-}
-
-func (c *Context) Param(number int) *Param {
-	return &Param{
-		state:  c.state,
-		number: number,
-	}
-}
-
-func (c *Context) Data(number int) *Data {
-	return &Data{
-		state:  c.state,
-		number: number,
-	}
+	state  *lua.LState
+	pushed int
 }
 
 func (c *Context) Top() int {
 	return c.state.GetTop()
+}
+
+func (c *Context) Arg(num int) *Argument {
+	return &Argument{
+		state:  c.state,
+		number: num,
+	}
 }
 
 func (c *Context) Push() *Push {
@@ -32,10 +24,10 @@ func (c *Context) Push() *Push {
 	}
 }
 
-func (c *Context) error(e error) {
-	c.state.RaiseError(e.Error())
+func (c *Context) increase() {
+	c.pushed++
 }
 
-func (c *Context) empty() bool {
-	return c.e
+func (c *Context) error(e string) {
+	c.state.RaiseError(e)
 }

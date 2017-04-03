@@ -5,48 +5,37 @@ import (
 )
 
 type Module struct {
-	Name  string
-	funcs map[string]Handler
+	name   string
+	state  *lua.LState
+	fields map[string]lua.LValue
+	funcs  map[string]Handler
+}
+
+func (m *Module) String(name, value string) {
+	m.fields[name] = lua.LString(value)
+}
+
+func (m *Module) Number(name string, value float64) {
+	m.fields[name] = lua.LNumber(value)
+}
+
+func (m *Module) Bool(name string, value bool) {
+	m.fields[name] = lua.LBool(value)
 }
 
 func (m *Module) Func(name string, handler Handler) {
 	m.funcs[name] = handler
 }
 
-func (m *Module) load(s *lua.LState) int {
-	f := map[string]lua.LGFunction{}
+func (m *Module) load() {
+	m.state.PreloadModule(m.name, func(state *lua.LState) int {
+		module := state.SetFuncs(state.NewTable(), exports(m.funcs))
 
-	for name, handler := range m.funcs {
-		f[name] = func(state *lua.LState) int {
-			return m.handle(state, handler)
+		for name, value := range m.fields {
+			state.SetField(module, name, value)
 		}
-	}
 
-	mod := s.SetFuncs(s.NewTable(), f)
-	s.Push(mod)
-
-	return 1
-}
-
-func (m *Module) prepare(s *lua.LState) {
-	s.PreloadModule(m.Name, m.load)
-}
-
-func (m *Module) handle(s *lua.LState, handler Handler) int {
-	c := &Context{
-		e:     true,
-		state: s,
-	}
-
-	err := handler(c)
-	if err != nil {
-		c.error(err)
-		return 0
-	}
-
-	if !c.empty() {
+		state.Push(module)
 		return 1
-	}
-
-	return 0
+	})
 }
