@@ -36,9 +36,9 @@ func BenchmarkFibonacci_Lua_OpenLibs(b *testing.B) {
 func fib(n float64) float64 {
 	if n < 3 {
 		return 1
-	} else {
-		return fib(n-1) + fib(n-2)
 	}
+
+	return fib(n-1) + fib(n-2)
 }
 
 func benchNative(bndr *Binder, b *testing.B) {
