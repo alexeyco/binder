@@ -14,7 +14,7 @@ func TestLua_Func(t *testing.T) {
 			return errors.New("need at least 2 arguments")
 		}
 
-		var sum float64 = 0
+		var sum float64
 		for i := 1; i <= t; i++ {
 			sum += c.Arg(i).Number()
 		}
