@@ -57,6 +57,10 @@ func TestLua_Func(t *testing.T) {
 		return nil
 	})
 
+	l.Func("raiser", func(c *Context) error {
+		return errors.New("For honnor!")
+	})
+
 	b.Load(l)
 
 	if err := b.DoString(`
@@ -72,6 +76,10 @@ func TestLua_Func(t *testing.T) {
 		assert(sum(100, 200) == 300, '100 + 200 != 300')
 	`); err != nil {
 		t.Error("Error execute function", err)
+	}
+
+	if err := b.DoString("raiser()"); err == nil {
+		t.Error("Must return error", err)
 	}
 }
 
