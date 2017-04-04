@@ -6,7 +6,9 @@ import (
 )
 
 func TestLua_Func(t *testing.T) {
-	b := New()
+	b := New(Options{
+		SkipOpenLibs: true,
+	})
 
 	b.Func("sum", func(c *Context) error {
 		t := c.Top()
