@@ -79,6 +79,11 @@ func TestLua_Module(t *testing.T) {
 	b := New()
 
 	m := b.Module("reverse")
+
+	m.String("_STRING", "foobar")
+	m.Number("_NUMBER", 123)
+	m.Bool("_BOOL", true)
+
 	m.Func("string", func(c *Context) error {
 		if c.Top() == 0 {
 			return errors.New("need arguments")
@@ -95,12 +100,7 @@ func TestLua_Module(t *testing.T) {
 		return nil
 	})
 
-	if err := b.DoString(`
-		local r = require('reverse')
-
-		assert(r.string('ABCDE') == 'EDCBA', 'ABCDE != EDCBA')
-		assert(r.string('01234') == '43210', '01234 != 43210')
-	`); err != nil {
+	if err := b.DoFile("lua_test.lua"); err != nil {
 		t.Error("Error execute module", err)
 	}
 }
