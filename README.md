@@ -15,6 +15,11 @@ To run unit tests:
 $ cd $GOPATH/src/github.com/alexeyco/binder
 $ go test -cover
 ```
+To see why you need to bind go to lua (need few minutes):
+```
+$ cd $GOPATH/src/github.com/alexeyco/binder
+$ go test -bench=.
+```
 
 ## Examples
 
