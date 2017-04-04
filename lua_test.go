@@ -3,14 +3,26 @@ package binder
 import (
 	"errors"
 	"testing"
+
+	"github.com/yuin/gopher-lua"
 )
 
 func TestLua_Func(t *testing.T) {
 	b := New(Options{
 		SkipOpenLibs: true,
 	})
+	b.Func("negate", func(c *Context) error {
+		t := c.Top()
+		if t != 1 {
+			return errors.New("need an argument")
+		}
 
-	b.Func("sum", func(c *Context) error {
+		c.Push().Bool(!c.Arg(1).Bool())
+		return nil
+	})
+
+	l := NewLoader()
+	l.Func("sum", func(c *Context) error {
 		t := c.Top()
 		if t < 2 {
 			return errors.New("need at least 2 arguments")
@@ -25,7 +37,36 @@ func TestLua_Func(t *testing.T) {
 		return nil
 	})
 
+	l.Func("gettype", func(c *Context) error {
+		t := c.Top()
+		if t != 1 {
+			return errors.New("need an argument")
+		}
+
+		switch c.Arg(1).Any().(type) {
+		case lua.LNumber:
+			c.Push().String("number")
+		case lua.LString:
+			c.Push().String("string")
+		case lua.LBool:
+			c.Push().String("bool")
+		default:
+			c.Push().Bool(false)
+		}
+
+		return nil
+	})
+
+	b.Load(l)
+
 	if err := b.DoString(`
+		assert(negate(true) == false, 'wrong negation')
+		assert(negate(false) == true, 'wrong negation')
+
+		assert(gettype(123) == 'number', '123 is not number')
+		assert(gettype("string") == 'string', '"string" is not string')
+		assert(gettype(true) == 'bool', 'true is not bool')
+
 		assert(sum(1, 2) == 3, '1 + 2 != 3')
 		assert(sum(5, 7) == 12, '5 + 7 != 12')
 		assert(sum(100, 200) == 300, '100 + 200 != 300')

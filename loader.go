@@ -42,6 +42,7 @@ func (l *Loader) Table(name string) *Table {
 
 func (l *Loader) load(s *lua.LState) {
 	f := exports(l.funcs)
+
 	for name, fn := range f {
 		s.SetGlobal(name, s.NewFunction(fn))
 	}

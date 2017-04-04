@@ -95,23 +95,27 @@ func NewLoader() *Loader {
 }
 
 func exports(funcs map[string]Handler) map[string]lua.LGFunction {
-	e := map[string]lua.LGFunction{}
+	e := make(map[string]lua.LGFunction, len(funcs))
 
 	for name, handler := range funcs {
-		e[name] = func(state *lua.LState) int {
-			c := &Context{
-				state: state,
-			}
-
-			err := handler(c)
-			if err != nil {
-				c.error(err.Error())
-				return 0
-			}
-
-			return c.pushed
-		}
+		e[name] = handle(handler)
 	}
 
 	return e
+}
+
+func handle(handler Handler) lua.LGFunction {
+	return func(state *lua.LState) int {
+		c := &Context{
+			state: state,
+		}
+
+		err := handler(c)
+		if err != nil {
+			c.error(err.Error())
+			return 0
+		}
+
+		return c.pushed
+	}
 }
