@@ -9,41 +9,14 @@ type Handler func(*Context) error
 
 // Binder is a binder... that's all
 type Binder struct {
+	*Loader
 	state   *lua.LState
-	funcs   map[string]Handler
-	modules []*Module
-	tables  []*Table
+	loaders []*Loader
 }
 
-// Func assign handler with specified alias
-func (b *Binder) Func(name string, handler Handler) {
-	b.funcs[name] = handler
-}
-
-// Module creates new module and returns it
-func (b *Binder) Module(name string) *Module {
-	m := &Module{
-		name:   name,
-		state:  b.state,
-		fields: map[string]lua.LValue{},
-		funcs:  map[string]Handler{},
-	}
-
-	b.modules = append(b.modules, m)
-	return m
-}
-
-// Table creates new table and returns it
-func (b *Binder) Table(name string) *Table {
-	t := &Table{
-		name:    name,
-		state:   b.state,
-		static:  map[string]Handler{},
-		dynamic: map[string]Handler{},
-	}
-
-	b.tables = append(b.tables, t)
-	return t
+// Load apply Loader
+func (b *Binder) Load(loader *Loader) {
+	b.loaders = append(b.loaders, loader)
 }
 
 // DoString runs lua script string
@@ -59,17 +32,10 @@ func (b *Binder) DoFile(f string) error {
 }
 
 func (b *Binder) load() {
-	funcs := exports(b.funcs)
-	for name, f := range funcs {
-		b.state.SetGlobal(name, b.state.NewFunction(f))
-	}
+	loaders := append([]*Loader{b.Loader}, b.loaders...)
 
-	for _, m := range b.modules {
-		m.load()
-	}
-
-	for _, t := range b.tables {
-		t.load()
+	for _, l := range loaders {
+		l.load(b.state)
 	}
 }
 
@@ -110,8 +76,18 @@ func New(opts ...Options) *Binder {
 		}
 	}
 
-	return &Binder{
+	b := &Binder{
 		state:   s,
+		loaders: []*Loader{},
+	}
+	b.Loader = NewLoader()
+
+	return b
+}
+
+// NewLoader returns new loader
+func NewLoader() *Loader {
+	return &Loader{
 		funcs:   map[string]Handler{},
 		modules: []*Module{},
 		tables:  []*Table{},
