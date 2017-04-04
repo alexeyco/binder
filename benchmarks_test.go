@@ -63,21 +63,6 @@ func benchNative(bndr *Binder, b *testing.B) {
 }
 
 func benchLua(bndr *Binder, b *testing.B) {
-	bndr.Func("fib", func(c *Context) error {
-		t := c.Top()
-		if t < 2 {
-			return errors.New("need at least 2 arguments")
-		}
-
-		var sum float64
-		for i := 1; i <= t; i++ {
-			sum += c.Arg(i).Number()
-		}
-
-		c.Push().Number(sum)
-		return nil
-	})
-
 	s := `
 		function fib(n)
 			if n<3 then
