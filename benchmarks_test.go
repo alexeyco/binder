@@ -10,6 +10,36 @@ const (
 	testFibonacciIterations = 30
 )
 
+func TestBenchmarks_Assert(t *testing.T) {
+	bndr := New()
+
+	bndr.Func("fib_go", func(c *Context) error {
+		t := c.Top()
+		if t != 1 {
+			return errors.New("need an argument")
+		}
+
+		c.Push().Number(fib(c.Arg(1).Number()))
+		return nil
+	})
+
+	if err := bndr.DoString(`
+		function fib_lua(n)
+			if n<3 then
+				return 1
+			else
+				return fib_lua(n-1) + fib_lua(n-2)
+			end
+		end
+
+		assert(fib_go(3) == fib_lua(3), 'fib_go(3) != fib_lua(3)')
+		assert(fib_go(10) == fib_lua(10), 'fib_go(10) != fib_lua(10)')
+		assert(fib_go(30) == fib_lua(30), 'fib_go(30) != fib_lua(30)')
+	`); err != nil {
+		t.Error("Lua and go funcs are not equal", err)
+	}
+}
+
 func BenchmarkFibonacci_Go(b *testing.B) {
 	benchNative(New(Options{
 		SkipOpenLibs: true,
