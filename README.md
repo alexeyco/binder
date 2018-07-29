@@ -5,6 +5,7 @@ High level go to Lua binder. Write less, do more.
 [![Coverage Status](https://coveralls.io/repos/github/alexeyco/binder/badge.svg?branch=master)](https://coveralls.io/github/alexeyco/binder?branch=master)
 [![Go Report Card](https://goreportcard.com/badge/github.com/alexeyco/binder)](https://goreportcard.com/report/github.com/alexeyco/binder)&nbsp;[![GoDoc](https://godoc.org/github.com/alexeyco/binder?status.svg)](https://godoc.org/github.com/alexeyco/binder)
 [![license](https://img.shields.io/github/license/alexeyco/binder.svg)](https://github.com/alexeyco/binder)
+[![binder](https://img.shields.io/badge/awesome-go-red.svg)](https://github.com/avelino/awesome-go#embeddable-scripting-languages)
 
 Package binder allows to easily bind to Lua. Based on [gopher-lua](https://github.com/yuin/gopher-lua).
 
