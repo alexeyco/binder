@@ -117,7 +117,7 @@ func newSource(code string, problem int) *source {
 		lines[i] = &line{
 			number:  i + 1,
 			problem: i+1 == problem,
-			code:    v,
+			code:    strings.TrimSpace(v),
 		}
 	}
 
