@@ -13,7 +13,7 @@ You can display detailed information about the error and get something like this
 
 ![Error](https://raw.githubusercontent.com/alexeyco/binder/master/Error.jpg)
 
-See [_example/04-highlight-errors](https://github.com/alexeyco/binder/tree/master/_example/04-highlight-errors).
+See [_example/04-highlight-errors](https://github.com/alexeyco/binder/tree/master/_example/04-highlight-errors). And [read more](#killer-featured-errors) about it.
 
 ## Installation
 ```
@@ -190,6 +190,43 @@ For example:
 b := binder.New(binder.Options{
 	SkipOpenLibs: true,
 })
+```
+
+### Killer-featured errors
+
+```go
+package main
+
+import (
+	"errors"
+	"log"
+	"os"
+
+	"github.com/alexeyco/binder"
+)
+
+type Person struct {
+	Name string
+}
+
+func main() {
+	b := binder.New()
+	
+	// ...
+
+	if err := b.DoString(`-- some string`); err != nil {
+		switch err.(type) {
+		case *binder.Error:
+			e := err.(*binder.Error)
+			e.Print()
+
+			os.Exit(0)
+			break
+		default:
+			log.Fatalln(err)
+		}
+	}
+}
 ```
 
 Note: if `SkipOpenLibs` is `true`, not all open libs will be skipped in contrast to the basic logic of 
