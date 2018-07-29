@@ -30,6 +30,48 @@ print(p:email())
 	}
 }
 
+func TestErrorSourceBig_Func(t *testing.T) {
+	b := getBinder()
+
+	if err := b.DoString(`
+
+
+
+
+
+
+
+local p = person.new('Steeve')
+print(p:email())
+
+
+
+
+
+
+
+
+
+
+    `); err != nil {
+		switch err.(type) {
+		case *Error:
+			e := err.(*Error)
+			s := strings.Split(e.Source(), "\n")
+			l := len(s)
+
+			need := errorLinesBefore + errorLinesAfter + 1
+			if l != need {
+				t.Errorf("Source must have %d lines, received %d", need, l)
+			}
+
+			break
+		default:
+			t.Error("Must return error", err)
+		}
+	}
+}
+
 func getBinder() *Binder {
 	b := New()
 	tbl := b.Table("person")
