@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/yuin/gopher-lua"
 )
 
@@ -24,8 +25,28 @@ type line struct {
 	code    string
 }
 
+const (
+	errBgColor = color.BgRed
+	errFgColor = color.FgWhite
+
+	numberFgColor = color.FgHiBlack
+	numberBgColor = color.BgBlack
+)
+
 func (l *line) String(numbers int) string {
-	return fmt.Sprintf("%s %s", l.numberString(numbers), l.code)
+	numberBg := numberBgColor
+
+	line := l.code
+	if l.problem {
+		numberBg = errBgColor
+		line = color.New(errBgColor, errFgColor).Sprintf("%s", line)
+	} else {
+		line = highlight(line)
+	}
+
+	number := color.New(numberBg, numberFgColor).Sprintf("%s ", l.numberString(numbers))
+
+	return number + line
 }
 
 func (l *line) numberString(pad int) string {
@@ -126,7 +147,7 @@ func (e *Error) Source() string {
 
 // Print prints problem source code
 func (e *Error) Print() {
-	fmt.Println(e.Error())
+	color.New(color.FgHiRed).Println(e.Error())
 	fmt.Println()
 	fmt.Println(e.Source())
 }
@@ -163,4 +184,8 @@ func newError(err error, h errSourceHandler) error {
 	}
 
 	return err
+}
+
+func highlight(s string) string {
+	return s
 }
