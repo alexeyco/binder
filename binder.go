@@ -2,6 +2,7 @@ package binder
 
 import (
 	"github.com/yuin/gopher-lua"
+	"io/ioutil"
 )
 
 // Handler is binder function handler
@@ -22,13 +23,32 @@ func (b *Binder) Load(loader *Loader) {
 // DoString runs lua script string
 func (b *Binder) DoString(s string) error {
 	b.load()
-	return b.state.DoString(s)
+	return b.do(b.state.DoString(s), func(problem int) *source {
+		return newSource(s, problem)
+	})
 }
 
 // DoFile runs lua script file
 func (b *Binder) DoFile(f string) error {
 	b.load()
-	return b.state.DoFile(f)
+	return b.do(b.state.DoFile(f), func(problem int) *source {
+		s, _ := ioutil.ReadFile(f)
+		return newSource(string(s), problem)
+	})
+}
+
+// do applies returns improved errors if it needed
+func (b *Binder) do(err error, h errSourceHandler) error {
+	if err != nil {
+		return newError(err, h)
+	}
+
+	return nil
+}
+
+// source returns lua source script
+func (b *Binder) source() string {
+	return b.state.String()
 }
 
 func (b *Binder) load() {

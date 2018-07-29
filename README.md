@@ -1,12 +1,22 @@
 # Binder
+High level go to Lua binder. Write less, do more.
 
-[![binder](https://img.shields.io/badge/lua-go_binder-red.svg)](https://github.com/alexeyco/binder)&nbsp;[![Travis](https://img.shields.io/travis/alexeyco/binder.svg)](https://travis-ci.org/alexeyco/binder)&nbsp;[![Coverage Status](https://coveralls.io/repos/github/alexeyco/binder/badge.svg?branch=master)](https://coveralls.io/github/alexeyco/binder?branch=master)&nbsp;[![Go Report Card](https://goreportcard.com/badge/github.com/alexeyco/binder)](https://goreportcard.com/report/github.com/alexeyco/binder)&nbsp;[![GoDoc](https://godoc.org/github.com/alexeyco/binder?status.svg)](https://godoc.org/github.com/alexeyco/binder)&nbsp;[![license](https://img.shields.io/github/license/alexeyco/binder.svg)](https://github.com/alexeyco/binder)
-
-
+[![Travis](https://img.shields.io/travis/alexeyco/binder.svg)](https://travis-ci.org/alexeyco/binder)
+[![Coverage Status](https://coveralls.io/repos/github/alexeyco/binder/badge.svg?branch=master)](https://coveralls.io/github/alexeyco/binder?branch=master)
+[![Go Report Card](https://goreportcard.com/badge/github.com/alexeyco/binder)](https://goreportcard.com/report/github.com/alexeyco/binder)&nbsp;[![GoDoc](https://godoc.org/github.com/alexeyco/binder?status.svg)](https://godoc.org/github.com/alexeyco/binder)
+[![license](https://img.shields.io/github/license/alexeyco/binder.svg)](https://github.com/alexeyco/binder)
 
 Package binder allows to easily bind to Lua. Based on [gopher-lua](https://github.com/yuin/gopher-lua).
 
-Write less, do more.
+*Write less, do more!*
+
+## Killer-feature
+
+You can display detailed information about the error and get something like this:
+
+![Error](https://raw.githubusercontent.com/alexeyco/binder/master/Error.jpg)
+
+See [_example/04-highlight-errors](https://github.com/alexeyco/binder/tree/master/_example/04-highlight-errors). And [read more](#killer-featured-errors) about it.
 
 ## Installation
 ```
@@ -183,6 +193,43 @@ For example:
 b := binder.New(binder.Options{
 	SkipOpenLibs: true,
 })
+```
+
+### Killer-featured errors
+
+```go
+package main
+
+import (
+	"errors"
+	"log"
+	"os"
+
+	"github.com/alexeyco/binder"
+)
+
+type Person struct {
+	Name string
+}
+
+func main() {
+	b := binder.New()
+	
+	// ...
+
+	if err := b.DoString(`-- some string`); err != nil {
+		switch err.(type) {
+		case *binder.Error:
+			e := err.(*binder.Error)
+			e.Print()
+
+			os.Exit(0)
+			break
+		default:
+			log.Fatalln(err)
+		}
+	}
+}
 ```
 
 Note: if `SkipOpenLibs` is `true`, not all open libs will be skipped in contrast to the basic logic of 
