@@ -14,7 +14,7 @@ Package binder allows to easily bind to Lua. Based on [gopher-lua](https://githu
 
 You can display detailed information about the error and get something like this:
 
-![Error](https://raw.githubusercontent.com/alexeyco/binder/master/Error.jpg)
+![Error](https://raw.githubusercontent.com/alexeyco/binder/master/Error.png)
 
 See [_example/04-highlight-errors](https://github.com/alexeyco/binder/tree/master/_example/04-highlight-errors). And [read more](#killer-featured-errors) about it.
 
