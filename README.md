@@ -10,6 +10,16 @@ Package binder allows to easily bind to Lua. Based on [gopher-lua](https://githu
 
 *Write less, do more!*
 
+1. [Killer-feature](#killer-feature)
+1. [Installation](#installation)
+1. [Examples](#examples)
+    1. [Functions](#functions)
+    1. [Modules](#modules)
+    1. [Tables](#tables)
+    1. [Options](#options)
+    1. [Killer-featured errors](#killer-featured-errors)
+1. [License](#license)
+
 ## Killer-feature
 
 You can display detailed information about the error and get something like this:
