@@ -3,10 +3,10 @@ package main
 import (
 	"errors"
 	"log"
+	"os"
 
 	"github.com/alexeyco/binder"
-				"os"
-	)
+)
 
 type Person struct {
 	Name string
@@ -50,7 +50,11 @@ print(p:name())
 
 -- person table does not have method "email"
 print(p:email())
-	`); err != nil {
+
+-- must
+-- be
+-- crashed
+    `); err != nil {
 		switch err.(type) {
 		case *binder.Error:
 			e := err.(*binder.Error)

@@ -5,8 +5,11 @@ import (
 	"strconv"
 	"strings"
 
+	"bytes"
+	"github.com/alecthomas/chroma/quick"
 	"github.com/fatih/color"
 	"github.com/yuin/gopher-lua"
+	"io/ioutil"
 )
 
 const (
@@ -33,10 +36,10 @@ const (
 	numberBgColor = color.BgBlack
 )
 
-func (l *line) String(numbers int) string {
+func (l *line) str(numbers, len int) string {
 	numberBg := numberBgColor
 
-	line := l.code
+	line := l.codeString(len)
 	if l.problem {
 		numberBg = errBgColor
 		line = color.New(errBgColor, errFgColor).Sprintf("%s", line)
@@ -60,31 +63,49 @@ func (l *line) numberString(pad int) string {
 	return fmt.Sprintf("%s%s", strings.Repeat(" ", pad), output)
 }
 
+func (l *line) codeString(pad int) string {
+	output := l.code
+	pad -= len(output)
+
+	if pad <= 0 {
+		return output
+	}
+
+	return fmt.Sprintf("%s%s", output, strings.Repeat(" ", pad))
+}
+
 type source struct {
 	lines []*line
 }
 
 func (s *source) problem() string {
 	output := make([]string, len(s.lines))
-	numbers := s.numbersMaxLength()
+	numbers, len := s.maxLengths()
 
 	for i, l := range s.lines {
-		output[i] = l.String(numbers)
+		output[i] = l.str(numbers, len)
 	}
 
 	return strings.Join(output, "\n")
 }
 
-func (s *source) numbersMaxLength() int {
+func (s *source) maxLengths() (int, int) {
+	n := 0
 	l := 0
+
 	for _, line := range s.lines {
-		length := len(fmt.Sprintf("%d", line.number))
-		if length > l {
-			l = length
+		nl := len(fmt.Sprintf("%d", line.number))
+		if nl > n {
+			n = nl
+		}
+
+		ll := len(line.code)
+		if ll > l {
+			l = ll
 		}
 	}
 
-	return l
+	return n, l
 }
 
 func newSource(code string, problem int) *source {
@@ -187,5 +208,15 @@ func newError(err error, h errSourceHandler) error {
 }
 
 func highlight(s string) string {
-	return s
+	var buf bytes.Buffer
+	if err := quick.Highlight(&buf, s, "lua", "terminal", "solarized-dark"); err != nil {
+		return s
+	}
+
+	b, err := ioutil.ReadAll(&buf)
+	if err != nil {
+		return s
+	}
+
+	return string(b)
 }
