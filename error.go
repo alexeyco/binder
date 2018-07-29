@@ -1,15 +1,15 @@
 package binder
 
 import (
+	"bytes"
 	"fmt"
+	"io/ioutil"
 	"strconv"
 	"strings"
 
-	"bytes"
 	"github.com/alecthomas/chroma/quick"
 	"github.com/fatih/color"
 	"github.com/yuin/gopher-lua"
-	"io/ioutil"
 )
 
 const (
@@ -200,8 +200,6 @@ func newError(err error, h errSourceHandler) error {
 			problem: problem,
 			source:  h(problem),
 		}
-
-		break
 	}
 
 	return err
