@@ -7,6 +7,8 @@ before_install:
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
   - go get github.com/yuin/gopher-lua
+  - go get github.com/alecthomas/chroma/quick
+  - go get github.com/fatih/color
 
 script:
  - go test -v ./...
