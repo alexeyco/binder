@@ -9,7 +9,7 @@ import (
 
 	"github.com/alecthomas/chroma/quick"
 	"github.com/fatih/color"
-	"github.com/yuin/gopher-lua"
+	lua "github.com/yuin/gopher-lua"
 )
 
 const (
@@ -192,7 +192,7 @@ func newError(err error, h errSourceHandler) error {
 		}
 
 		if c > 2 {
-			text = strings.Trim(p[2], " ")
+			text = strings.Trim(strings.Join(p[2:], ":"), " ")
 		}
 
 		return &Error{
